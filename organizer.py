@@ -3,6 +3,8 @@ from sys import argv
 from os import makedirs, listdir, rename
 from enum import StrEnum
 import multiprocessing as mp
+from PyPDF2 import PdfReader
+import json
 
 class Categories(StrEnum):
     Programming = "Programming"
@@ -10,15 +12,50 @@ class Categories(StrEnum):
     Math = "Math"
     Database = "Database"
     Security = "Security"
+    Other = "Other"
+
+def get_categorical_keywords() -> dict[str, list]:
+    with open("keywords.json", "r") as json_file:
+        return json.load(json_file)
 
 def create_dirs(working_dir:Path):
     for category in Categories:
         makedirs(working_dir.joinpath(category), exist_ok=True)
 
+def get_file_keywords(file: Path) -> set[str]:
+    keywords = set()
+    reader = PdfReader(file)
+
+    if key := "/keywords" in reader.metadata:
+        extracted_metadata = str(reader.metadata.get(key)).lower()
+        split_metadata = set(extracted_metadata.split(","))
+        keywords = keywords.union(split_metadata)
+    
+    if key := "/Title" in reader.metadata: keywords.add(str(reader.metadata.get(key)).lower())
+    
+    first_page = reader.pages[0]
+    first_page_keywords = set(first_page.extract_text().lower().split())
+    keywords = keywords.union(first_page_keywords)
+    
+    return keywords
+    
+
+
+
 def mock_task(file: Path):
+    category:Categories = categorize_file(file)
+
+def categorize_file(file):
+    categorical_keywords = get_categorical_keywords()
+    file_keywords = get_file_keywords(file)
+    category_scores = {}
     for catergory in Categories:
-        if file.stem.lower() == catergory.lower():
-            file.rename(file.parent.joinpath(catergory).joinpath(file.name))
+        if catergory == Categories.Other:
+            continue
+        present_keywords = file_keywords.intersection(set(categorical_keywords[catergory]))
+        category_scores[catergory] = len(present_keywords)
+    maximum_score_category = max(category_scores, key=category_scores.get)
+    return Categories(maximum_score_category) if category_scores[maximum_score_category] > 0 else Categories.Other
 
 def assign_processes(files: list[Path]):
     processes: list[mp.Process] = []
@@ -38,8 +75,7 @@ def main(args):
     directory = Path(args[1])
     if not(directory.is_dir()):
         raise ValueError("Incorrect Arguments: Directory does not exist")
-    dir_contents = listdir(directory)
-    pdf_files = [directory.joinpath(file) for file in dir_contents if Path(file).suffix == ".pdf"]
+    pdf_files = list(directory.glob("*.pdf"))
     if not pdf_files:
         raise ValueError("No PDF files found")
     create_dirs(directory)
