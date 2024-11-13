@@ -31,7 +31,8 @@ def get_file_keywords(file: Path) -> set[str]:
         split_metadata = set(extracted_metadata.split(","))
         keywords = keywords.union(split_metadata)
     
-    if key := "/Title" in reader.metadata: keywords.add(str(reader.metadata.get(key)).lower())
+    if key := "/Title" in reader.metadata: 
+        keywords = keywords.union(set(str(reader.metadata.get(key)).lower().split()))
     
     first_page = reader.pages[0]
     first_page_keywords = set(first_page.extract_text().lower().split())
