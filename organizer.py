@@ -42,25 +42,26 @@ def get_file_keywords(file: Path) -> set[str]:
 
 
 
-def mock_task(file: Path):
-    category:Categories = categorize_file(file)
+def categorize_file(file: Path):
+    category:Categories = get_file_category(file)
+    file.rename(file.parent.joinpath(category).joinpath(file.name))
 
-def categorize_file(file):
+def get_file_category(file):
     categorical_keywords = get_categorical_keywords()
     file_keywords = get_file_keywords(file)
     category_scores = {}
-    for catergory in Categories:
-        if catergory == Categories.Other:
+    for category in Categories:
+        if category == Categories.Other:
             continue
-        present_keywords = file_keywords.intersection(set(categorical_keywords[catergory]))
-        category_scores[catergory] = len(present_keywords)
+        present_keywords = file_keywords.intersection(set(categorical_keywords[category]))
+        category_scores[category] = len(present_keywords)
     maximum_score_category = max(category_scores, key=category_scores.get)
     return Categories(maximum_score_category) if category_scores[maximum_score_category] > 0 else Categories.Other
 
 def assign_processes(files: list[Path]):
     processes: list[mp.Process] = []
     for file in files:
-        process = mp.Process(target=mock_task, args=(file, ))
+        process = mp.Process(target=categorize_file, args=(file, ))
         process.start()
         processes.append(process)
     return processes
