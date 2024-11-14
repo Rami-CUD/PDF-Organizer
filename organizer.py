@@ -1,12 +1,13 @@
 from pathlib import Path
 from sys import argv
-from os import makedirs, listdir, rename
+from os import makedirs
 from enum import StrEnum
 import multiprocessing as mp
 from PyPDF2 import PdfReader
 from PyPDF2.errors import EmptyFileError
 import json
 import re
+from collections import defaultdict
 
 class Categories(StrEnum):
     Programming = "Programming"
@@ -50,9 +51,10 @@ def get_file_keywords(file: Path) -> set[str]:
 
 
 
-def categorize_file(file: Path):
+def categorize_file(file: Path, shared_counter:mp.Queue):
     category:Categories = get_file_category(file)
     file.rename(file.parent.joinpath(category).joinpath(file.name))
+    shared_counter.put(category)
 
 def get_file_category(file):
     categorical_keywords = get_categorical_keywords()
@@ -66,10 +68,10 @@ def get_file_category(file):
     maximum_score_category = max(category_scores, key=category_scores.get)
     return Categories(maximum_score_category) if category_scores[maximum_score_category] > 0 else Categories.Other
 
-def assign_processes(files: list[Path]):
+def assign_processes(files: list[Path], shared_counter: mp.Queue):
     processes: list[mp.Process] = []
     for file in files:
-        process = mp.Process(target=categorize_file, args=(file, ))
+        process = mp.Process(target=categorize_file, args=(file, shared_counter))
         process.start()
         processes.append(process)
     return processes
@@ -77,6 +79,21 @@ def assign_processes(files: list[Path]):
 def join_processes(processes:list[mp.Process]):
     for process in processes:
         process.join()
+
+def count_categories(shared_counter: mp.Queue):
+    counter = defaultdict(int)
+    for _ in range(shared_counter.qsize()):
+        category = shared_counter.get()
+        counter[category] += 1
+    return counter
+
+def generate_report(directory:Path, fileCount:int, category_count:dict[Categories, int]):
+    lines = ["Analysis Report:\n", "----------------\n"]
+    for category in Categories:
+        percentage = round(category_count[category]/fileCount * 100)
+        lines.append(f"{category}: {percentage}%\n")
+    with open(directory.joinpath("report.txt"), "w") as report:
+        report.writelines(lines)
 
 def main(args):
     if len(args) != 2:
@@ -88,8 +105,11 @@ def main(args):
     if not pdf_files:
         raise ValueError("No PDF files found")
     create_dirs(directory)
-    processes = assign_processes(pdf_files)
+    shared_counter: mp.Queue[Categories] = mp.Queue()
+    processes = assign_processes(pdf_files, shared_counter)
     join_processes(processes)
+    category_count:defaultdict[Categories, int] = count_categories(shared_counter)
+    generate_report(directory, len(pdf_files), category_count)
 
 if __name__ == "__main__":
     main(argv)
