@@ -4,7 +4,9 @@ from os import makedirs, listdir, rename
 from enum import StrEnum
 import multiprocessing as mp
 from PyPDF2 import PdfReader
+from PyPDF2.errors import EmptyFileError
 import json
+import re
 
 class Categories(StrEnum):
     Programming = "Programming"
@@ -24,8 +26,13 @@ def create_dirs(working_dir:Path):
 
 def get_file_keywords(file: Path) -> set[str]:
     keywords = set()
-    reader = PdfReader(file)
-
+    WHITESPACE_OR_UNDERSCORE = re.compile("\W+|_")
+    try:
+        reader = PdfReader(file)
+    except EmptyFileError:
+        keywords = set(WHITESPACE_OR_UNDERSCORE.split(file.stem.lower()))
+        return keywords
+    
     if key := "/keywords" in reader.metadata:
         extracted_metadata = str(reader.metadata.get(key)).lower()
         split_metadata = set(extracted_metadata.split(","))
@@ -85,5 +92,4 @@ def main(args):
     join_processes(processes)
 
 if __name__ == "__main__":
-    argv.append("test")
     main(argv)
