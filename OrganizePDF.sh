@@ -10,7 +10,7 @@ while getopts 'd:r:' OPTION; do
             report_dir="${OPTARG}"
             ;;
         *) echo "Bad >:("
-        ;;
+            exit 1 ;;
     esac
 done
 
