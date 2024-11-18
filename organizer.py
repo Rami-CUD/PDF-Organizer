@@ -96,9 +96,10 @@ def generate_report(directory:Path, fileCount:int, category_count:dict[Categorie
         report.writelines(lines)
 
 def main(args):
-    if len(args) != 2:
+    if len(args) != 3:
         raise ValueError("Incorrect Arguments. Format: <directory>")
     directory = Path(args[1])
+    report_dir = Path(args[2])
     if not(directory.is_dir()):
         raise ValueError("Incorrect Arguments: Directory does not exist")
     pdf_files = list(directory.glob("*.pdf"))
@@ -109,7 +110,7 @@ def main(args):
     processes = assign_processes(pdf_files, shared_counter)
     join_processes(processes)
     category_count:defaultdict[Categories, int] = count_categories(shared_counter)
-    generate_report(directory, len(pdf_files), category_count)
+    generate_report(report_dir, len(pdf_files), category_count)
 
 if __name__ == "__main__":
     main(argv)

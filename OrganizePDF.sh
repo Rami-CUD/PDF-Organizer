@@ -1,6 +1,19 @@
 #!/bin/bash
-if [ -d "$1" ]; then
-    python organizer.py "$1"
-else
-    echo "Please enter a valid Directory. Format: organize [directory]"
-fi
+pdf_dir="."     
+report_dir="."
+while getopts 'd:r:' OPTION; do
+    case "${OPTION}" in 
+        d) 
+            pdf_dir="${OPTARG}"
+            ;;
+        r)
+            report_dir="${OPTARG}"
+            ;;
+        *) echo "Bad >:("
+        ;;
+    esac
+done
+
+
+python organizer.py "$pdf_dir" "$report_dir"
+
