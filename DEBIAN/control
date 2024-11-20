@@ -1,0 +1,10 @@
+Package: PDFOrganizer
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: 20220001825@students.cud.ac.ae
+Description: Organizes PDFs according to certain categories in a given directory and generate a report afterwards
+N/A
+Dependencies: python3
+
