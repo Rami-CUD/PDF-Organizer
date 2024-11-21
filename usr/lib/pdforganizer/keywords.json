@@ -4,7 +4,6 @@
         "programming",
         "algorithm",
         "script",
-        "development",
         "java",
         "python",
         "javascript",
@@ -15,7 +14,8 @@
         "compiler",
         "function",
         "method",
-        "oop"
+        "oop",
+        "prolog"
     ],
     "AI": [
         "machine learning",

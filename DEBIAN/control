@@ -4,6 +4,6 @@ Section: utils
 Priority: optional
 Architecture: all
 Maintainer: 20220001825@students.cud.ac.ae
+Depends: python3, python3-pypdf
 Description: Organizes PDFs according to certain categories in a given directory and generate a report afterwards
-Dependencies: python3, python3-pypdf2
 

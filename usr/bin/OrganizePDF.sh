@@ -1,7 +1,14 @@
 #!/bin/bash
 pdf_dir="."     
 report_dir="."
-while getopts 'd:r:' OPTION; do
+script_dir="/usr/lib/pdforganizer/organizer.py"
+correctness=""
+
+print_format() {
+    echo "Format: OrganizePDF -d [PDF Directory] -r [Report Directory]"
+}
+
+while getopts 'd:r:c' OPTION; do
     case "${OPTION}" in 
         d) 
             pdf_dir="${OPTARG}"
@@ -9,11 +16,15 @@ while getopts 'd:r:' OPTION; do
         r)
             report_dir="${OPTARG}"
             ;;
-        *) echo "Bad >:("
+        c)
+            correctness="1"
+            ;;
+        *) 
+            print_format
             exit 1 ;;
     esac
 done
 
 
-python organizer.py "$pdf_dir" "$report_dir"
+python "$script_dir" "$pdf_dir" "$report_dir" "$correctness"
 
