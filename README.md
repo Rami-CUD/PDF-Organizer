@@ -1,5 +1,5 @@
 # PDF-Organizer
-## Installtion
+## Installation
 Grab the .deb file from the latest release through whatever method.
 ### Example:
 ```sh
