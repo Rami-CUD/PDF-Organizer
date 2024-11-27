@@ -187,6 +187,9 @@ def main(args):
     #Ensure the given PDF directory is a directory and that it has PDFs
     if not(directory.is_dir()):
         raise ValueError("Incorrect Arguments: Directory does not exist")
+    if not(report_dir.is_dir()):
+        raise ValueError("Incorrect Arguments: Report directory does not exist")
+
     pdf_files = list(directory.glob("*.pdf"))
     if not pdf_files:
         raise ValueError("No PDF files found")
