@@ -1,12 +1,11 @@
 # PDF-Organizer
 ## Installation
-Grab the .deb file from the latest release through whatever method.
+Grab the .deb file from the latest release through any method.
 ### Example:
 ```sh
 wget https://github.com/Rami-CUD/PDF-Organizer/releases/download/1.0.3/PDFOrganizer.deb
 ```
 Then apt install the .deb file.
-Example:
 ```sh
 sudo apt install ./PDFOrganizer.deb
 ```
