@@ -5,7 +5,11 @@ script_dir="/usr/lib/pdforganizer/organizer.py"
 correctness=""
 
 print_format() {
-    echo "Format: OrganizePDF -d [PDF Directory] -r [Report Directory]"
+    echo "Usage: OrganizePDF.sh [options]"
+    echo "Options:"
+    echo "  -d <PDF Directory> Takes current directory by default"
+    echo "  -r <Report Directory> Takes current directory by default"
+    echo "  -c Enables correctness score generation"
 }
 
 while getopts 'd:r:c' OPTION; do
