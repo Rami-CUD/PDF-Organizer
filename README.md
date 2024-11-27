@@ -1,7 +1,7 @@
 # PDF-Organizer
 ## Installtion
 Grab the .deb file from the latest release through whatever method.
-Example:
+### Example:
 ```sh
 wget https://github.com/Rami-CUD/PDF-Organizer/releases/download/1.0.3/PDFOrganizer.deb
 ```
@@ -12,12 +12,12 @@ sudo apt install ./PDFOrganizer.deb
 ```
 ## Usage 
 OrganizePDF.sh [options]
-Options:
+### Options:
 - -d <PDF Directory> Takes current directory by default
 - -r <Report Directory> Takes current directory by default
 - -c Enables correctness score generation
 
-Example:
+### Example:
 ```sh
 OrganizePDF.sh -c
 ```
