@@ -29,9 +29,10 @@ while getopts 'd:r:c' OPTION; do
     esac
 done
 
-# Shift off the processed options and check for extra arguments
+# Shift off the already processed options and check for extra incorrect arguments
 shift $((OPTIND - 1))
 
+# If remaining arguments is greater than 0, print an error and exit
 if [[ $# -gt 0 ]]; then
     echo "Error: Unexpected argument(s): $@"
     print_format
