@@ -29,6 +29,15 @@ while getopts 'd:r:c' OPTION; do
     esac
 done
 
+# Shift off the processed options and check for extra arguments
+shift $((OPTIND - 1))
+
+if [[ $# -gt 0 ]]; then
+    echo "Error: Unexpected argument(s): $@"
+    print_format
+    exit 1
+fi
+
 
 python "$script_dir" "$pdf_dir" "$report_dir" "$correctness"
 
