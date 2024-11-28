@@ -3,7 +3,7 @@
 Grab the .deb file from the latest release through any method.
 ### Example:
 ```sh
-wget https://github.com/Rami-CUD/PDF-Organizer/releases/download/1.0.3/PDFOrganizer.deb
+wget https://github.com/Rami-CUD/PDF-Organizer/releases/download/1.0.4/PDFOrganizer.deb
 ```
 Then apt install the .deb file.
 ```sh
